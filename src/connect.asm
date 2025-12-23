@@ -1,8 +1,9 @@
 ; =============================================================================
 ; COMMODORE 128 CONNECTION MODULE
+; ca65 syntax
 ; =============================================================================
 
-connect_server
+connect_server:
         jsr     net_init
         bcs     conn_fail
         jsr     net_connect
@@ -11,26 +12,26 @@ connect_server
         sta     connected
         clc
         rts
-conn_fail
+conn_fail:
         lda     #0
         sta     connected
         sec
         rts
 
-conn_port   .word   0
-connected   .byte   0
-server_ip   .byte   0, 0, 0, 0
+conn_port:  .word   0
+connected:  .byte   0
+server_ip:  .byte   0, 0, 0, 0
 
-disconnect
+disconnect:
         lda     connected
         beq     disc_done
         jsr     net_close
         lda     #0
         sta     connected
-disc_done
+disc_done:
         rts
 
-show_connect_screen
+show_connect_screen:
         jsr     display_init
         ldx     #30
         ldy     #8
@@ -53,10 +54,10 @@ show_connect_screen
         jsr     set_cursor
         rts
 
-cs_title    .byte   "CONNECT TO RACHEL", 0
-cs_prompt   .byte   "SERVER IP: ", 0
+cs_title:   .byte   "CONNECT TO RACHEL", 0
+cs_prompt:  .byte   "SERVER IP: ", 0
 
-get_server_address
+get_server_address:
         jsr     show_connect_screen
         lda     #<input_buffer
         sta     zp_ptr
@@ -70,17 +71,17 @@ get_server_address
         bcs     gsa_cancel
         clc
         rts
-gsa_cancel
+gsa_cancel:
         sec
         rts
 
-parse_ip
+parse_ip:
         ldy     #0
         ldx     #0
-pi_byte
+pi_byte:
         lda     #0
         sta     zp_temp1
-pi_digit
+pi_digit:
         lda     (zp_ptr),y
         beq     pi_end_byte
         cmp     #'.'
@@ -101,25 +102,25 @@ pi_digit
         sta     zp_temp1
         iny
         bne     pi_digit
-pi_next
+pi_next:
         lda     zp_temp1
         sta     server_ip,x
         inx
         iny
         cpx     #4
         bcc     pi_byte
-pi_error
+pi_error:
         sec
         rts
-pi_end_byte
+pi_end_byte:
         lda     zp_temp1
         sta     server_ip,x
         clc
         rts
 
-input_buffer    .fill   16, 0
+input_buffer:   .res    16
 
-show_connecting
+show_connecting:
         ldx     #32
         ldy     #14
         jsr     set_cursor
@@ -129,9 +130,9 @@ show_connecting
         sta     zp_ptr+1
         jsr     print_string
         rts
-sc_msg  .byte   "CONNECTING...", 0
+sc_msg: .byte   "CONNECTING...", 0
 
-show_connect_error
+show_connect_error:
         ldx     #28
         ldy     #14
         jsr     set_cursor
@@ -142,4 +143,4 @@ show_connect_error
         jsr     print_string
         jsr     wait_key
         rts
-sce_msg .byte   "CONNECTION FAILED!", 0
+sce_msg:    .byte   "CONNECTION FAILED!", 0

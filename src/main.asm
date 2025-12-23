@@ -23,8 +23,9 @@ start:
 
         ; Connect to server
         jsr     do_connect
-        bcs     conn_failed
-
+        bcc     conn_ok
+        jmp     conn_failed
+conn_ok:
         ; Initialize RUBP
         jsr     rubp_init
 
@@ -226,11 +227,6 @@ bpm_clr:
         inx
         cpx     #16
         bne     bpm_clr
-        rts
-
-wait_key:
-        jsr     GETIN
-        beq     wait_key
         rts
 
 ; Data

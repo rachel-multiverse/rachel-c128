@@ -1,18 +1,19 @@
 ; =============================================================================
 ; COMMODORE 128 RUBP PROTOCOL MODULE
 ; Message types defined in equates.asm
+; ca65 syntax
 ; =============================================================================
 
-rubp_init
+rubp_init:
         lda     #0
         sta     rubp_seq
         sta     last_recv_seq
         rts
 
-rubp_seq        .byte   0
-last_recv_seq   .byte   0
+rubp_seq:       .byte   0
+last_recv_seq:  .byte   0
 
-build_header
+build_header:
         sta     msg_type_temp
         lda     #'R'
         sta     tx_buffer
@@ -47,16 +48,16 @@ build_header
         sta     tx_buffer+15
         rts
 
-msg_type_temp   .byte   0
-player_id       .word   0
-game_id         .word   0
+msg_type_temp:  .byte   0
+player_id:      .word   0
+game_id:        .word   0
 
-send_join
+send_join:
         lda     #MSG_JOIN
         jsr     build_header
         ldx     #16
         lda     #0
-sj_clear
+sj_clear:
         sta     tx_buffer,x
         inx
         cpx     #64
@@ -64,12 +65,12 @@ sj_clear
         jsr     net_send
         rts
 
-send_ready
+send_ready:
         lda     #MSG_READY
         jsr     build_header
         ldx     #16
         lda     #0
-sr_clear
+sr_clear:
         sta     tx_buffer,x
         inx
         cpx     #64
@@ -77,7 +78,7 @@ sr_clear
         jsr     net_send
         rts
 
-send_play_cards
+send_play_cards:
         stx     card_count_temp
         lda     #MSG_PLAY_CARDS
         jsr     build_header
@@ -86,23 +87,23 @@ send_play_cards
         lda     nominated_suit
         sta     tx_buffer+17
         ldx     #0
-spc_copy
+spc_copy:
         cpx     card_count_temp
         bcs     spc_pad
         lda     card_play_buf,x
         sta     tx_buffer+18,x
         inx
         bne     spc_copy
-spc_pad
+spc_pad:
         cpx     #8
         bcs     spc_done
         lda     #0
         sta     tx_buffer+18,x
         inx
         bne     spc_pad
-spc_done
+spc_done:
         ldx     #26
-spc_clear
+spc_clear:
         lda     #0
         sta     tx_buffer,x
         inx
@@ -111,16 +112,16 @@ spc_clear
         jsr     net_send
         rts
 
-card_count_temp .byte   0
-nominated_suit  .byte   $FF
-card_play_buf   .fill   8, 0
+card_count_temp:    .byte   0
+nominated_suit:     .byte   $FF
+card_play_buf:      .res    8
 
-send_draw
+send_draw:
         lda     #MSG_DRAW_CARD
         jsr     build_header
         ldx     #16
         lda     #0
-sd_clear
+sd_clear:
         sta     tx_buffer,x
         inx
         cpx     #64
@@ -128,7 +129,7 @@ sd_clear
         jsr     net_send
         rts
 
-receive_message
+receive_message:
         jsr     net_recv
         bcs     rm_none
         lda     rx_buffer
@@ -148,13 +149,13 @@ receive_message
         lda     rx_buffer+6
         clc
         rts
-rm_invalid
-rm_none
+rm_invalid:
+rm_none:
         lda     #0
         sec
         rts
 
-process_game_state
+process_game_state:
         lda     rx_buffer+16
         sta     CURRENT_TURN
         lda     rx_buffer+17
@@ -168,7 +169,7 @@ process_game_state
         lda     rx_buffer+21
         sta     PENDING_SKIPS
         ldx     #0
-pgs_counts
+pgs_counts:
         lda     rx_buffer+22,x
         sta     PLAYER_COUNTS,x
         inx
@@ -179,7 +180,7 @@ pgs_counts
         lda     rx_buffer+31
         sta     HAND_COUNT
         ldx     #0
-pgs_hand
+pgs_hand:
         lda     rx_buffer+32,x
         sta     MY_HAND,x
         inx
@@ -187,5 +188,5 @@ pgs_hand
         bne     pgs_hand
         rts
 
-tx_buffer   .fill   64, 0
-rx_buffer   .fill   64, 0
+tx_buffer:  .res    64
+rx_buffer:  .res    64

@@ -94,3 +94,24 @@ RANK_ACE        = 1
 RANK_JACK       = 11
 RANK_QUEEN      = 12
 RANK_KING       = 13
+
+; Game state variables (RAM)
+CURRENT_TURN    = $0C00
+DIRECTION       = $0C01
+DISCARD_TOP     = $0C02
+NOMINATED_SUIT  = $0C03
+PENDING_DRAWS   = $0C04
+PENDING_SKIPS   = $0C05
+MY_INDEX        = $0C06
+HAND_COUNT      = $0C07
+PLAYER_COUNTS   = $0C08         ; 8 bytes
+MY_HAND         = $0C10         ; 16 bytes
+CURSOR_POS      = $0C20
+SELECTED_LO     = $0C21
+SELECTED_HI     = $0C22
+
+; Key aliases
+KEY_QUIT        = KEY_Q
+KEY_SELECT      = KEY_SPACE
+KEY_PLAY        = KEY_RETURN
+KEY_DRAW        = KEY_D
